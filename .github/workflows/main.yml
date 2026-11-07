@@ -37,13 +37,13 @@ jobs:
       # 5. Verify Build
       - name: Verify Build
         run: |
-          if [ ! -d "./Frontend/dist" ]; then
+          if [ ! -d "./my-react-app/dist" ]; then
             echo "Error: dist folder not found!"
             exit 1
           fi
 
           echo "React build completed successfully."
-          ls -la ./Frontend/dist/
+          ls -la ./my-react-app/dist/
 
       # 6. Deploy React to cPanel
       - name: Deploy to FTP
