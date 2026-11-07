@@ -1,0 +1,66 @@
+name: React CI/CD - cPanel
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 1. Checkout GitHub Repository
+      - name: Checkout GitHub Repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js 24
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: Frontend/package-lock.json
+
+      # 3. Install Dependencies
+      - name: Install Packages
+        working-directory: ./Frontend
+        run: npm ci
+
+      # 4. Build React Application
+      - name: Build React
+        working-directory: ./Frontend
+        run: npm run build
+
+      # 5. Verify Build
+      - name: Verify Build
+        run: |
+          if [ ! -d "./Frontend/dist" ]; then
+            echo "Error: dist folder not found!"
+            exit 1
+          fi
+
+          echo "React build completed successfully."
+          ls -la ./Frontend/dist/
+
+      # 6. Deploy React to cPanel
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_HOST0 }}
+          username: ${{ secrets.FTP_USERNAME01 }}
+          password: ${{ secrets.FTP_PASSWORD0 }}
+          protocol: ftps
+          port: 21
+          local-dir: ./Frontend/
+          server-dir: ./react-application/
+          exclude: |
+            **/node_modules/**
+            **/.git/**
+            **/.github/**
+            **/.env
+            **/.env.*
+            **/.DS_Store
+            **/npm-debug.log
