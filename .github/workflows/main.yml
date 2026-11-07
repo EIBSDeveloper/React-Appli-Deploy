@@ -22,16 +22,16 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-          cache-dependency-path: Frontend/package-lock.json
+          cache-dependency-path: my-react-app/package-lock.json
 
       # 3. Install Dependencies
       - name: Install Packages
-        working-directory: ./Frontend
+        working-directory: ./my-react-app
         run: npm ci
 
       # 4. Build React Application
       - name: Build React
-        working-directory: ./Frontend
+        working-directory: ./my-react-app
         run: npm run build
 
       # 5. Verify Build
